@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookStore.admin.notice.dao.INoticeDao">
+
+	<select id="selectNotice" resultType="Notice">
+		select * from notice
+	</select>
+
+	<select id="selectNoticeByCount" resultType="int">
+		select count(*) from notice
+	</select>
+	
+	<select id="selectNoticeById" resultType="Notice">
+		select * from notice where n_id = #{id}
+	</select>
+
+	<update id="updateNotice" >
+		update notice 
+		<set>
+			<if test="title != null and title != ''">
+				title = #{title},
+			</if>
+			<if test="details != null and details != ''">
+				details = #{details}
+			</if>
+		</set>
+		where n_id = #{n_id}
+	</update>
+
+	<delete id="deleteNoticeById">
+		delete from notice where n_id = #{id}
+	</delete>
+	
+	<insert id="insertNotice">
+		insert into notice(n_id,title,n_time,details)
+		values(#{n_id},#{title},#{n_time},#{details})
+	</insert>
+	
+</mapper>

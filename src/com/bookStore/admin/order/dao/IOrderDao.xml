@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookStore.admin.order.dao.IOrderDao">
+
+	<select id="selectUsersById" resultType="User">
+		select * from user where id = #{user_id}
+	</select>
+	
+	<resultMap type="Order" id="orderMap">
+		<association property="user"
+		javaType="User"
+		select="selectUsersById"
+		column="user_id"/>
+	</resultMap>
+	
+	<select id="selectOrder" resultMap="orderMap">
+		select * from orders
+	</select>
+
+	<select id="selectOrderByCondition" resultMap="orderMap">
+		select * from orders
+		<where>
+			<if test="order.id !=null and order.id != ''">
+				id = #{order.id}
+			</if>
+			<if test="order.receiverName !=null and order.receiverName != ''">
+				and receiverName like '%' #{order.receiverName} '%'
+			</if>
+		</where>
+		limit #{start},#{pageSize}
+	</select>
+	
+	<select id="selectOrderByCount" resultType="int">
+		select count(*) from orders
+		<where>
+			<if test="id !=null and id != ''">
+				id = #{id}
+			</if>
+			<if test="receiverName !=null and receiverName != ''">
+				and receiverName like '%' #{receiverName} '%'
+			</if>
+		</where>
+		
+	</select>
+	
+	<select id="selectUserById" resultType="User">
+		select * 
+		from user,orders 
+		where 
+		orders.user_id = user.id 
+		and orders.id = #{id}
+	</select>
+	
+	<select id="selectOrderById" resultType="Order">
+		select * from orders where id = #{id}
+	</select>
+	
+	<!-- <select id="selectProductById" resultType="Product">
+		SELECT
+			products.id,
+			products.name,
+			products.price,
+			products.category,
+			products.pnum,
+			products.imgurl,
+			products.description
+		FROM
+			orders ,products ,orderitem
+		where orders.id = orderitem.order_id 
+		and products.id = orderitem.product_id
+		and orders.id = #{id}
+	</select> -->
+	
+	<select id="selectOrdersById" resultType="Order">
+		select * from orders where id=#{id}
+	</select>
+	
+	<select id="selectProductById" resultType="Product">
+		select * from products where id = #{id}
+	</select>
+	
+	<resultMap type="OrderItem" id="itemMap">
+		<association property="order"
+		javaType="Order"
+		select="selectOrdersById"
+		column="order_id"/>
+		
+		<association property="product"
+		javaType="Product"
+		select="selectProductById"
+		column="product_id"/>
+	</resultMap>
+	
+	<select id="selectOrderItemById" resultMap="itemMap">
+		select * from orderitem where order_id = #{id}
+	</select>
+	
+	<delete id="deleteOrderById">
+		delete from orders where id = #{id}
+	</delete>
+	<delete id="deleteOrderItemById">
+		delete from orderitem where order_id = #{id}
+	</delete>
+	
+	
+</mapper>
